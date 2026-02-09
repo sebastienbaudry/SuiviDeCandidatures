@@ -3,6 +3,9 @@ import ReactDOM from 'react-dom/client';
 import { Search, Plus, Edit2, Trash2, Calendar, Building2, MapPin, Users, Target, TrendingUp, CheckCircle2, XCircle, Clock, Star, Mail, Copy, Send, ExternalLink } from 'lucide-react';
 import './index.css';
 
+// Apply Tailwind styles directly
+document.documentElement.style.colorScheme = 'light';
+
 // Type definitions
 interface Candidature {
   id: number;
@@ -668,10 +671,7 @@ Génère uniquement le texte de la lettre, sans métadonnées.`;
   );
 }
 
-// Mount React app
-const root = ReactDOM.createRoot(document.getElementById('root')!);
-root.render(
-  <React.StrictMode>
-    <CandidaturesTracker />
-  </React.StrictMode>
+// Mount React app to DOM
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <CandidaturesTracker />
 );
