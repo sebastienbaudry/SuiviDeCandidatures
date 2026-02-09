@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Plus, Edit2, Trash2, Calendar, Building2, MapPin, Users, Target, TrendingUp, CheckCircle2, XCircle, Clock, Star, Mail, Copy, Send, ExternalLink } from 'lucide-react';
+import './index.css';
 
 // Type definitions
 interface Candidature {
