@@ -666,3 +666,13 @@ Génère uniquement le texte de la lettre, sans métadonnées.`;
     </div>
   );
 }
+
+// Mount React app
+import ReactDOM from 'react-dom/client';
+
+const root = ReactDOM.createRoot(document.getElementById('root')!);
+root.render(
+  <React.StrictMode>
+    <CandidaturesTracker />
+  </React.StrictMode>
+);
