@@ -1,6 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Plus, Edit2, Trash2, Calendar, Building2, MapPin, Users, Target, TrendingUp, CheckCircle2, XCircle, Clock, Star, Mail, Copy, Send, ExternalLink } from 'lucide-react';
 
+// Type definitions
+interface Candidature {
+  id: number;
+  entreprise: string;
+  localisation: string;
+  effectifs: string;
+  priorite: number;
+  probabilite: string;
+  interets: string;
+  contact: string;
+  status: 'pending' | 'sent' | 'relance' | 'entretien' | 'refus';
+  dateCandidature: string;
+  dateRelance: string;
+  notes: string;
+  siteRecrutement: string;
+}
+
 const STORAGE_KEY = 'candidatures-bim';
 const SHARED_STORAGE = false;
 
@@ -65,7 +82,7 @@ const PRIORITY_CONFIG = {
 };
 
 // DONNÉES MISES À JOUR AVEC RECHERCHES
-const INITIAL_DATA = [
+const INITIAL_DATA: Candidature[] = [
   { id: 1, entreprise: "Botte Fondations (Vinci)", localisation: "St-Herblain / Nantes / St-Nazaire", effectifs: "~500", priorite: 1, probabilite: "Très forte / partenaire", interets: "Guidage machines, modélisation sols, proche IUT", contact: "bottefondations@vinci-construction.fr", status: "pending", dateCandidature: "", dateRelance: "", notes: "Spécialiste fondations profondes. Vérifier si offre spécifique sur site Vinci.", siteRecrutement: "https://www.vinci-construction.com/carrieres" },
   { id: 2, entreprise: "ALP Géomètres", localisation: "St-Nazaire (Bd Victor Hugo) & Nantes", effectifs: "15-20", priorite: 1, probabilite: "Forte", interets: "Scanner 3D + drones, structure humaine", contact: "contact@alp-geometres.fr", status: "pending", dateCandidature: "", dateRelance: "", notes: "Julien Pottier / Thierry Legros (Gérants). Très actifs sur le bassin nazairien.", siteRecrutement: "https://www.alp-geometres.fr/contact" },
   { id: 3, entreprise: "Atlantique Géomètres Experts", localisation: "St-Nazaire & La Baule", effectifs: "20-30", priorite: 1, probabilite: "Forte", interets: "Scan 3D → maquettes BIM", contact: "secretariat@age-lb.com", status: "pending", dateCandidature: "", dateRelance: "", notes: "Fabien Palfroy / Germain Batard (Associés). Adresses mails spécifiques possibles : fabien.palfroy@geometre-expert.fr", siteRecrutement: "https://www.age-lb.com" },
@@ -107,17 +124,17 @@ const INITIAL_DATA = [
 ];
 
 export default function CandidaturesTracker() {
-  const [candidatures, setCandidatures] = useState([]);
+  const [candidatures, setCandidatures] = useState<Candidature[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterPriority, setFilterPriority] = useState('all');
-  const [selectedCandidature, setSelectedCandidature] = useState(null);
+  const [selectedCandidature, setSelectedCandidature] = useState<Candidature | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedLetter, setGeneratedLetter] = useState(null);
   const [showLetterModal, setShowLetterModal] = useState(false);
-  const [currentLetterCandidature, setCurrentLetterCandidature] = useState(null);
+  const [currentLetterCandidature, setCurrentLetterCandidature] = useState<Candidature | null>(null);
 
   // Load data from storage
   useEffect(() => {
