@@ -26,6 +26,37 @@ interface Candidature {
 const STORAGE_KEY = 'candidatures-bim';
 const SHARED_STORAGE = false;
 
+// Storage wrapper: prefer host-provided `window.storage`, fall back to localStorage
+const storageAPI = {
+  async get(key: string) {
+    try {
+      const host = (window as any).storage;
+      if (host && typeof host.get === 'function') {
+        return await host.get(key, SHARED_STORAGE);
+      }
+      const val = localStorage.getItem(key);
+      return val ? { value: val } : null;
+    } catch (err) {
+      console.error('storage.get error:', err);
+      const val = localStorage.getItem(key);
+      return val ? { value: val } : null;
+    }
+  },
+  async set(key: string, value: string) {
+    try {
+      const host = (window as any).storage;
+      if (host && typeof host.set === 'function') {
+        await host.set(key, value, SHARED_STORAGE);
+        return;
+      }
+      localStorage.setItem(key, value);
+    } catch (err) {
+      console.error('storage.set error:', err);
+      try { localStorage.setItem(key, value); } catch (e) { /* ignore */ }
+    }
+  }
+};
+
 // Profile data from CV and formation
 const PROFILE_DATA = {
   nom: "Anthony BAUDRY",
@@ -148,14 +179,14 @@ export default function CandidaturesTracker() {
 
   const loadData = async () => {
     try {
-      const result = await (window as any).storage.get(STORAGE_KEY, SHARED_STORAGE);
-      if (result && result.value) {
-        setCandidatures(JSON.parse(result.value));
-      } else {
-        // Initialize with default data
-        setCandidatures(INITIAL_DATA);
-        await saveData(INITIAL_DATA);
-      }
+        const result = await storageAPI.get(STORAGE_KEY);
+        if (result && (result as any).value) {
+          setCandidatures(JSON.parse((result as any).value));
+        } else {
+          // Initialize with default data
+          setCandidatures(INITIAL_DATA);
+          await saveData(INITIAL_DATA);
+        }
     } catch (error) {
       console.log('Initializing with default data');
       setCandidatures(INITIAL_DATA);
@@ -166,7 +197,7 @@ export default function CandidaturesTracker() {
 
   const saveData = async (data: any) => {
     try {
-      await (window as any).storage.set(STORAGE_KEY, JSON.stringify(data), SHARED_STORAGE);
+      await storageAPI.set(STORAGE_KEY, JSON.stringify(data));
     } catch (error) {
       console.error('Error saving data:', error);
     }
